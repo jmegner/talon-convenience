@@ -1,6 +1,8 @@
-Move-Item -Path ..\talon-config-jme -Destination ..\..
-if (Test-Path -Path ..\..\community) {
-    Move-Item -Path ..\..\community -Destination ..
+. $PSScriptRoot\dirs.ps1
+
+Move-Item -Path "$userDir\talon-config-jme" -Destination "$talonDir"
+if (Test-Path -Path $communityArchiveDir) {
+    Move-Item -Path "$communityArchiveDir" -Destination "$userDir"
 } else {
-    git clone https://github.com/talonhub/community.git ..\community
+    git clone https://github.com/talonhub/community.git $communityActiveDir
 }

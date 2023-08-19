@@ -1,5 +1,3 @@
-using namespace System.Collections.Generic
-
 [CmdletBinding()]
 param (
     [Parameter(Mandatory,ValueFromRemainingArguments)]
