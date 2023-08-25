@@ -6,3 +6,4 @@ $ErrorActionPreference = 'Stop'
 [string] $communityActiveDir = "$userDir/community"
 [string] $myConfigArchiveDir = "$talonDir/talon-config-jme"
 [string] $myConfigActiveDir = "$userDir/talon-config-jme"
+[string] $rangoDir = "$userDir/rango-talon"
