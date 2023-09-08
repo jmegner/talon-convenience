@@ -9,14 +9,14 @@ try {
     git remote add community https://github.com/talonhub/community.git
     git pull community main
     if ($?) {
-        Write-Host "no conflicts"
         git status
         git push origin main
+        Write-Host "no conflicts; you can pull from origin into user and delete $tempConfigName"
         Set-Location $rootDir
         explorer $rootDir
     }
     else {
-        Write-Warning "merge conflicts"
+        Write-Warning "merge conflicts; resolve them, push from $tempConfigName, pull to user, and delete temp folder"
         code .
         explorer $rootDir
     }
