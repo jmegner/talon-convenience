@@ -4,14 +4,23 @@ try {
     $rootDir = "$rootParent\_talon"
     $tempConfigName = "talon-config-jme-$(Get-Date -Format 'yyyy-MM-dd_HHmm')"
     $tempConfigDir = "$rootDir\$tempConfigName"
-    git clone https://github.com/jmegner/talon-config-jme.git "$tempConfigDir"
+    git clone --filter=blob:none https://github.com/jmegner/talon-config-jme.git "$tempConfigDir"
     Set-Location "$tempConfigDir"
-    git remote add community https://github.com/talonhub/community.git
-    git pull community main
-    if ($?) {
+    git remote add upstream https://github.com/talonhub/community.git
+    git pull upstream main
+    $pullSuccess = $?
+    $localTipCommit = git log -n 1 --format="%H"
+    $remoteOldTipCommit = git log -n 1 --format="%H" origin/main
+
+    if ($pullSuccess) {
         git status
         git push origin main
-        Write-Host "no conflicts; you can pull from origin into user and delete $tempConfigName"
+        if ($localTipCommit -eq $remoteOldTipCommit) {
+            Write-Host "no conflicts and no pushed changes; you can delete $tempConfigName"
+        }
+        else {
+            Write-Host "no conflicts and pushed some changesr; pull from origin into user and delete $tempConfigName"
+        }
         Set-Location $rootDir
         explorer $rootDir
     }
