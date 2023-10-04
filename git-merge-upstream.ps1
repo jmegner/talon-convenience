@@ -6,10 +6,11 @@ try {
     $tempConfigDir = "$rootDir\$tempConfigName"
 
     git clone --filter=blob:none https://github.com/jmegner/talon-config-jme.git "$tempConfigDir"
+    #git clone https://github.com/jmegner/talon-config-jme.git "$tempConfigDir"
 
     Set-Location "$tempConfigDir"
     git remote add upstream https://github.com/talonhub/community.git
-    git pull upstream main
+    git pull --no-rebase upstream main
     $pullSuccess = $?
 
     # only the hashes
