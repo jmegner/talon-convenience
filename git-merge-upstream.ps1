@@ -1,43 +1,70 @@
-$rootParent = $env:tmp
-Push-Location $rootParent
-try {
-    $rootDir = "$rootParent\_talon"
-    $tempConfigName = "talon-config-jme-$(Get-Date -Format 'yyyy-MM-dd_HHmm')"
-    $tempConfigDir = "$rootDir\$tempConfigName"
+Set-StrictMode -Version Latest
+. $PSScriptRoot\dirs.ps1
 
-    git clone --filter=blob:none https://github.com/jmegner/talon-config-jme.git "$tempConfigDir"
-    #git clone https://github.com/jmegner/talon-config-jme.git "$tempConfigDir"
+function Merge-Personal-Config {
+    $rootParent = $env:tmp
+    Push-Location $rootParent
+    try {
+        $rootDir = "$rootParent\_talon"
+        $tempConfigName = "talon-config-jme-$(Get-Date -Format 'yyyy-MM-dd_HHmm')"
+        $tempConfigDir = "$rootDir\$tempConfigName"
 
-    Set-Location "$tempConfigDir"
-    git remote add upstream https://github.com/talonhub/community.git
-    git pull --no-rebase upstream main
-    $pullSuccess = $?
+        git clone --filter=blob:none https://github.com/jmegner/talon-config-jme.git "$tempConfigDir"
+        #git clone https://github.com/jmegner/talon-config-jme.git "$tempConfigDir"
 
-    # only the hashes
-    $localTipCommit = git log -n 1 --format="%H"
-    $remoteOldTipCommit = git log -n 1 --format="%H" origin/main
+        Set-Location "$tempConfigDir"
+        git remote add upstream https://github.com/talonhub/community.git
+        git pull --no-rebase upstream main
+        $pullSuccess = $?
 
-    if ($pullSuccess) {
-        git status
-        git push origin main
-        Set-Location $rootDir
+        # only the hashes
+        $localTipCommit = git log -n 1 --format="%H"
+        $remoteOldTipCommit = git log -n 1 --format="%H" origin/main
 
-        if ($localTipCommit -eq $remoteOldTipCommit) {
-            Write-Host "no conflicts and no pushed changes; will delete $tempConfigName"
+        if ($pullSuccess) {
+            git status
+            git push origin main
+            Set-Location $rootDir
+
+            if ($localTipCommit -eq $remoteOldTipCommit) {
+                Write-Host "no conflicts and no pushed changes; will delete $tempConfigName"
+            }
+            else {
+                Write-Host "no conflicts and pushed some changes; will pull from origin into user and delete $tempConfigName"
+                Invoke-Expression "$PSScriptRoot\git-fast-forward-all.ps1"
+            }
+
+            Remove-Item -Recurse -Force $tempConfigDir
         }
         else {
-            Write-Host "no conflicts and pushed some changes; will pull from origin into user and delete $tempConfigName"
-            Invoke-Expression "$PSScriptRoot\git-fast-forward-all.ps1"
+            Write-Warning "merge conflicts; resolve them, push from $tempConfigName, pull to user, and delete temp folder"
+            code .
+            explorer $rootDir
         }
+    }
+    finally {
+        Pop-Location
+    }
+}
 
-        Remove-Item -Recurse -Force $tempConfigDir
+function Merge-Rango {
+    Push-Location "$userDir\rango-talon"
+    try {
+        git pull --no-rebase origin main
+        $pullSuccess = $?
+
+        if ($pullSuccess) {
+        }
+        else {
+            Write-Warning "merge conflicts; resolve them and commit"
+            code .
+            explorer $rootDir
+        }
     }
-    else {
-        Write-Warning "merge conflicts; resolve them, push from $tempConfigName, pull to user, and delete temp folder"
-        code .
-        explorer $rootDir
+    finally {
+        Pop-Location
     }
 }
-finally {
-    Pop-Location
-}
+
+Merge-Personal-Config
+Merge-Rango
