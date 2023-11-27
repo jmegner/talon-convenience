@@ -1,9 +1,12 @@
 [CmdletBinding()]
 param (
-    [Parameter(Mandatory,ValueFromRemainingArguments)]
-    [ValidateCount(1,[int]::MaxValue)]
+    [Parameter(Mandatory)]
     [string]
-    $Action
+    $Action,
+
+    [Parameter(ValueFromRemainingArguments)]
+    [string[]]
+    $ExemptFolders
 )
 
 Set-StrictMode -Version Latest
@@ -11,14 +14,21 @@ $ErrorActionPreference = 'Stop'
 
 [string] $userDir = "$($env:APPDATA)\talon\user\"
 
+Write-Host "for-each-user-folder; Action='$Action'; ExemptFolders='$ExemptFolders'"
+
 Get-ChildItem -Directory $userDir | ForEach-Object {
-    Write-Host "###########################################"
-    Write-Host "Visiting $_"
-    Push-Location $_
-    try {
-        Invoke-Expression $Action
+    Write-Host "`n###########################################"
+    if ($ExemptFolders -contains $_.Name -or $_.Name.StartsWith('.')) {
+        Write-Host "Skipping $_"
     }
-    finally {
-        Pop-Location
+    else {
+        Write-Host "Visiting '$_'"
+        Push-Location $_
+        try {
+            Invoke-Expression $Action
+        }
+        finally {
+            Pop-Location
+        }
     }
 }
