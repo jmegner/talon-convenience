@@ -31,7 +31,9 @@ function Merge-Personal-Config {
             }
             else {
                 Write-Host "no conflicts and pushed some changes; will pull from origin into user and delete $tempConfigName"
+                Write-Host "`n`nNow for fast forward"
                 Invoke-Expression "$PSScriptRoot\git-fast-forward-all.ps1"
+                Write-Host "summary: some pulled changes, no conflicts, so did a personal config push and then did a fast-forward-all"
             }
 
             Remove-Item -Recurse -Force $tempConfigDir
@@ -66,5 +68,7 @@ function Merge-Rango {
     }
 }
 
+Write-Host "=== Merge-Personal-Config ..."
 Merge-Personal-Config
+Write-Host "`n=== Merge-Rango ..."
 Merge-Rango
