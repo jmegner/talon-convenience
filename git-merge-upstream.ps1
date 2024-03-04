@@ -6,7 +6,7 @@ function Merge-Personal-Config {
     Push-Location $rootParent
     try {
         $rootDir = "$rootParent\_talon"
-        $tempConfigName = "talon-config-jme-$(Get-Date -Format 'yyyy-MM-dd_HHmm')"
+        $tempConfigName = "talon-config-jme-$(Get-Date -Format 'yyyy-MM-dd_HHmm-ss')"
         $tempConfigDir = "$rootDir\$tempConfigName"
 
         git clone --filter=blob:none https://github.com/jmegner/talon-config-jme.git "$tempConfigDir"
