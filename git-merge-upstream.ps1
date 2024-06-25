@@ -1,3 +1,8 @@
+[CmdletBinding()]
+param (
+    [Switch]$Fiddle
+)
+
 Set-StrictMode -Version Latest
 . $PSScriptRoot\dirs.ps1
 
@@ -9,7 +14,16 @@ function Merge-Personal-Config {
         $tempConfigName = "talon-config-jme-$(Get-Date -Format 'yyyy-MM-dd_HHmm-ss')"
         $tempConfigDir = "$rootDir\$tempConfigName"
 
-        git clone --filter=blob:none https://github.com/jmegner/talon-config-jme.git "$tempConfigDir"
+        if ($Fiddle) {
+            # below later complained about merging unrelated histories and pulling from upstream got much slower, so not much to be gained from this
+            #git clone --no-checkout --depth 1 --filter=tree:0 https://github.com/jmegner/talon-config-jme.git "$tempConfigDir"
+
+            # does not seem faster than the `--filter=blob:none` variant
+            git clone --no-checkout --filter=tree:0 https://github.com/jmegner/talon-config-jme.git "$tempConfigDir"
+        }
+        else {
+            git clone --filter=blob:none https://github.com/jmegner/talon-config-jme.git "$tempConfigDir"
+        }
         #git clone https://github.com/jmegner/talon-config-jme.git "$tempConfigDir"
 
         Set-Location "$tempConfigDir"
