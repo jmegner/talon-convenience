@@ -14,7 +14,7 @@ function Merge-Personal-Config {
 
         Set-Location "$tempConfigDir"
         git remote add upstream https://github.com/talonhub/community.git
-        git pull --no-rebase upstream main
+        git pull --no-rebase --no-edit upstream main
         $pullSuccess = $?
 
         # only the hashes
@@ -52,7 +52,7 @@ function Merge-Personal-Config {
 function Merge-Rango {
     Push-Location "$userDir\rango-talon"
     try {
-        git pull --no-rebase origin main
+        git pull --no-rebase --no-edit origin main
         $pullSuccess = $?
 
         if ($pullSuccess) {
