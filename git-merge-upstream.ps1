@@ -84,5 +84,6 @@ function Merge-Rango {
 
 Write-Host "=== Merge-Personal-Config ..."
 Merge-Personal-Config
-Write-Host "`n=== Merge-Rango ..."
-Merge-Rango
+# 2025-03-11 no longer maintaining personal fork of rango
+#Write-Host "`n=== Merge-Rango ..."
+#Merge-Rango
